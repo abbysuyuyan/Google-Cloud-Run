@@ -3,3 +3,5 @@ gunicorn
 requests
 pandas
 numpy
+google-cloud-firestore
+sendgrid
