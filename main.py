@@ -13,7 +13,6 @@ from flask import Flask
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-# --- Configuration Class ---
 class Config:
     DEPTH_STD_THRESHOLD = 1.0
     VRP_MIN_THRESHOLD = 0.01
@@ -77,8 +76,6 @@ class DataCollector:
             self.logger.error(f"Price data error: {e}")
         return None
 
-# --- SOLMonitor Class ---
-# (這是您提供的程式碼，移除了 Colab 特有功能)
 class SOLMonitor:
     def __init__(self, email_config):
         self.setup_logging()
@@ -87,7 +84,6 @@ class SOLMonitor:
         self.init_database()
 
     def setup_logging(self):
-        # 確保 log 檔案的目錄存在
         os.makedirs(os.path.dirname(Config.LOG_PATH), exist_ok=True)
         logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', handlers=[logging.FileHandler(Config.LOG_PATH), logging.StreamHandler()])
         self.logger = logging.getLogger(__name__)
@@ -139,7 +135,6 @@ class SOLMonitor:
             if depth_data.get('spread_bps', 0) > Config.SPREAD_MAX_BPS:
                 self.send_alert('WIDE_SPREAD', f'Spread {depth_data["spread_bps"]:.2f} bps exceeds {Config.SPREAD_MAX_BPS} bps', depth_data['spread_bps'], Config.SPREAD_MAX_BPS)
             
-            # ... (VRP check logic can be added here if needed, keeping it concise for now) ...
             conn.close()
         except Exception as e:
             self.logger.error(f"Alert check error: {e}")
@@ -159,7 +154,6 @@ class SOLMonitor:
                 conn.close()
                 return
             
-            # ... (Email sending logic, using self.email_config) ...
             msg = MIMEMultipart()
             msg['Subject'], msg['From'], msg['To'] = f"🚨 SOL Alert: {alert_type}", self.email_config['sender_email'], ', '.join(self.email_config['recipients'])
             html = f"<html><body><h2>🚨 SOL Risk Alert: {alert_type}</h2><p>{message}</p></body></html>" # Simplified HTML
@@ -200,12 +194,10 @@ class SOLMonitor:
         except Exception as e:
             self.logger.error(f"Cycle error: {e}", exc_info=True)
 
-# --- Flask App & Global Monitor Instance ---
 app = Flask(__name__)
 monitor = None
 
 def initialize_monitor():
-    """從環境變數載入設定並初始化監控器"""
     global monitor
     if monitor is None:
         print("🔧 Initializing monitor for the first time...")
@@ -224,7 +216,6 @@ def initialize_monitor():
 
 @app.route("/run", methods=['POST'])
 def execute_task():
-    """這是由 n8n 呼叫的 API 端點，用來觸發一次監控循環"""
     try:
         current_monitor = initialize_monitor()
         current_monitor.run_cycle()
