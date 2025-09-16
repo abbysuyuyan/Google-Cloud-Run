@@ -1,9 +1,9 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'asia-east1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/solana', '.']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/solana:$COMMIT_SHA', '.']
   
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'asia-east1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/solana']
+    args: ['push', 'gcr.io/$PROJECT_ID/solana:$COMMIT_SHA']
   
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
@@ -12,11 +12,16 @@ steps:
       - 'deploy'
       - 'solana'
       - '--image'
-      - 'asia-east1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/solana'
+      - 'gcr.io/$PROJECT_ID/solana:$COMMIT_SHA'
       - '--region'
       - 'asia-east1'
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'SENDER_EMAIL=abbysuyuyan@gmail.com,RECIPIENTS=abbysuyuyan@gmail.com'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
 
 timeout: 1200s
