@@ -180,7 +180,7 @@ class SOLMonitor:
             df = pd.read_sql_query("SELECT * FROM market_data WHERE timestamp > ?", conn, params=(cutoff,))
             
             if len(df) >= 10:
-                # 1. 市場深度檢查
+                # 1. Market Depth
                 mean, std = df['total_depth'].mean(), df['total_depth'].std()
                 threshold = mean - Config.DEPTH_STD_THRESHOLD * std
                 current = depth_data['total_depth']
@@ -191,7 +191,7 @@ class SOLMonitor:
                                    f'Market depth ${current:,.0f} below threshold ${threshold:,.0f}', 
                                    current, threshold)
                 
-                # 2. VRP檢查
+                # 2. VRP
                 if 'change_24h' in depth_data:
                     vrp = self.calculate_vrp(df, depth_data['change_24h'])
                     if vrp is not None:
@@ -201,34 +201,34 @@ class SOLMonitor:
                                           f'VRP {vrp*100:.2f}% below {Config.VRP_MIN_THRESHOLD*100}% threshold', 
                                           vrp, Config.VRP_MIN_THRESHOLD)
                 
-                # 3. RSI檢查 (新增)
+                # 3. RSI
                 prices = df['price'].tail(15).values  
                 if len(prices) >= 15:
                     rsi = self.calculate_rsi(prices, period=14)
                     if rsi is not None:
                         self.logger.info(f"RSI: {rsi:.1f}")
-                        if rsi > 80:  # 超買
+                        if rsi > 80: 
                             self.send_alert('RSI_OVERBOUGHT', 
                                           f'RSI {rsi:.1f} indicates overbought condition', 
                                           rsi, 80)
-                        elif rsi < 20:  # 超賣
+                        elif rsi < 20: 
                             self.send_alert('RSI_OVERSOLD', 
                                           f'RSI {rsi:.1f} indicates oversold condition', 
                                           rsi, 20)
             else:
                 self.logger.info(f"Not enough data for statistics (only {len(df)} records)")
 
-            # 4. 價差檢查
+            # 4. Spread
             if depth_data.get('spread_bps', 0) > Config.SPREAD_MAX_BPS:
                 self.send_alert('WIDE_SPREAD', 
                                f'Spread {depth_data["spread_bps"]:.2f} bps exceeds {Config.SPREAD_MAX_BPS} bps', 
                                depth_data['spread_bps'], Config.SPREAD_MAX_BPS)
             
-            # 5. 深度失衡檢查
+            # 5. Order Book
             if 'depth_imbalance' in depth_data:
                 imbalance = abs(depth_data['depth_imbalance'])
                 self.logger.info(f"Depth Imbalance: {depth_data['depth_imbalance']*100:.1f}%")
-                if imbalance > 0.3:  # 30%失衡
+                if imbalance > 0.3: 
                     side = "bid-heavy" if depth_data['depth_imbalance'] > 0 else "ask-heavy"
                     self.send_alert('DEPTH_IMBALANCE', 
                                    f'Order book is {imbalance*100:.1f}% {side}', 
@@ -394,8 +394,8 @@ def initialize_monitor():
     if monitor is None:
         print("🔧 Initializing monitor...")
         email_config = {
-            'sender_email': os.environ.get('SENDER_EMAIL', 'abbysuyuyan@gmail.com'),
-            'sender_password': os.environ.get('SENDER_PASSWORD'),  # 16字應用程式密碼
+            'sender_email': os.environ.get('SENDER_EMAIL', 'abbysuyuyan.python@gmail.com'),
+            'sender_password': os.environ.get('SENDER_PASSWORD'), 
             'recipients': os.environ.get('RECIPIENTS', 'abbysuyuyan@gmail.com').split(',')
         }
         
