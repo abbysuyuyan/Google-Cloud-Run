@@ -13,12 +13,12 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 class Config:
-    DEPTH_STD_THRESHOLD = 1.0     # 市場深度標準差閾值
-    VRP_MIN_THRESHOLD = 0.01       # VRP最小值 1%
-    RSI_OVERBOUGHT = 80            # RSI超買線
-    RSI_OVERSOLD = 20              # RSI超賣線
-    SPREAD_MAX_BPS = 20            # 最大價差 20 bps
-    IMBALANCE_THRESHOLD = 0.3      # 訂單簿失衡閾值 30%
+    DEPTH_STD_THRESHOLD = 1.0     # Market Depth
+    VRP_MIN_THRESHOLD = 0.01 
+    RSI_OVERBOUGHT = 80 
+    RSI_OVERSOLD = 20 
+    SPREAD_MAX_BPS = 20 
+    IMBALANCE_THRESHOLD = 0.3      # Order Book 30%
     EMAIL_COOLDOWN = 600          # 10分鐘冷卻
     DB_PATH = "/tmp/sol_risk.db"
     LOG_PATH = "/tmp/sol_risk.log"
