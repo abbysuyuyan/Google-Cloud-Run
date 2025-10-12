@@ -19,7 +19,7 @@ steps:
       - 'managed'
       - '--allow-unauthenticated'
       - '--set-env-vars'
-      - 'SENDER_EMAIL=abbysuyuyan@gmail.com,RECIPIENTS=abbysuyuyan@gmail.com'
+      - 'SENDER_EMAIL=abbysuyuyan.python@gmail.com,RECIPIENTS=abbysuyuyan@gmail.com'
 
 options:
   logging: CLOUD_LOGGING_ONLY
