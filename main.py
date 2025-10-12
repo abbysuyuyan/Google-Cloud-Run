@@ -19,7 +19,7 @@ class Config:
     RSI_OVERSOLD = 20 
     SPREAD_MAX_BPS = 20 
     IMBALANCE_THRESHOLD = 0.3      # Order Book 30%
-    EMAIL_COOLDOWN = 600          # 10分鐘冷卻
+    EMAIL_COOLDOWN = 3600          # 60分鐘冷卻
     DB_PATH = "/tmp/sol_risk.db"
     LOG_PATH = "/tmp/sol_risk.log"
 
